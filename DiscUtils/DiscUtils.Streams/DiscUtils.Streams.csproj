@@ -1,0 +1,10 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <Description>DiscUtils Streams</Description>
+    <Authors>Kenneth Bell;LordMike;Bianco Veigel</Authors>
+    <PackageTags>DiscUtils;Streams</PackageTags>
+    <TargetFrameworks>net7.0</TargetFrameworks>
+    <Platforms>x64;AnyCPU;ARM32;ARM64;x86</Platforms>
+  </PropertyGroup>
+
+</Project>

@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <OutputType>Library</OutputType>
+    <Company>Microsoft Corporation</Company>
+    <Copyright>Copyright %28c%29 Microsoft Corporation. All rights reserved.</Copyright>
+    <Product>Microsoft %28R%29 Windows %28R%29 Operating System</Product>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+	<Platforms>x64;AnyCPU;ARM32;ARM64;x86</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="7.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PkgToolBox\PkgToolBox.csproj" />
+  </ItemGroup>
+</Project>

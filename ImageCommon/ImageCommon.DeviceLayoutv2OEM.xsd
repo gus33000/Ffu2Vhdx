@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
+    targetNamespace="http://schemas.microsoft.com/embedded/2004/10/ImageUpdate/v2"
+    elementFormDefault="qualified"
+    xmlns="http://schemas.microsoft.com/embedded/2004/10/ImageUpdate/v2"
+    xmlns:mstns="http://schemas.microsoft.com/embedded/2004/10/ImageUpdate/v2"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <!---->
+    <!-- The OEM device layout element -->
+    <!---->
+    <xs:element name="OEMDeviceLayout" type="mstns:OEMDeviceLayout" />
+
+    <!---->
+    <!-- OEMDeviceLayout -->
+    <!---->
+    <xs:complexType name="OEMDeviceLayout">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                OEM/SV-owned device layout
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="Stores" type="mstns:Stores" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Specifies a group of physical storage devices. This element can appear at most once in the device layout.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="SectorSize" type="xs:positiveInteger" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Specifies the sector size of the underlying storage. It can be either 512 (bytes) or 4096 (bytes).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            
+            <xs:element name="MergeVersionTag" type="xs:positiveInteger" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies the version device layout validation rules to be used.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="UpdateByOSTag" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies whether the partition should be updated by OS.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+
+    <!---->
+    <!-- Stores -->
+    <!---->
+    <xs:complexType name="Stores">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                Specifies a group of physical storage devices or LUNs surfaced as a physical disk.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Store" type="mstns:Store" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Specifies a physical disk or LUN.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!---->
+    <!-- Store -->
+    <!---->
+    <xs:complexType name="Store">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                Define the configuration of a physical disk or a LUN.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Id" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Disk identifier - GUID for GPT, integer for MBR.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="StoreType" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Specifies the type of the store. It is also used for internal validation.
+
+                        Naming convention:
+
+                        For WCOS,
+                        Main disk (One that contains the storage pool) : "Default"
+
+                        For RAMBoot,
+                        Main disk:      : "RamDisk"
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="DevicePath" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Specifies the UEFI Device Path of the EFI_BLOCK_IO_PROTOCOL handle that maps to the storage device. See http://www.uefi.org/sites/default/files/resources/UEFI%20Spec%202_6.pdf for details.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+                
+            <xs:element name="SizeInBytes" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Specifies the size of the physical disk or LUN.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="OnlyAllocateDefinedGptEntries" type="xs:boolean" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies whether if only the minimum number of partition entries in GPT should be used. This is platform-specific.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="Partitions" type="mstns:Partitions" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Specifies the grouping of partitions nested under the disk.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!---->
+    <!-- Partitions -->
+    <!---->
+    <xs:complexType name="Partitions">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                Specifies the grouping of partitions nested under a disk. Ordering of the partitions in the image is implicitly specified by the ordering of partition elements.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Partition" type="mstns:Partition" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Specifies the configuration of a partition.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!---->
+    <!-- Partition -->
+    <!---->
+    <xs:complexType name="Partition">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                Defines partition configuration.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="Name" type="mstns:PartitionName" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Specifies the name of the partition. Must be unique across all physical disks, LUNs or virtual disks (storage spaces).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="Type" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Specifies the type of the partition. For GPT, it's a GUID. For MBR, it's an integer.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="Id" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Specifies the ID of the partition. For GPT, it's a GUID. For MBR, it's an integer.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="Bootable" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies whether it is a bootable partition. Applicable to MBR only.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="TotalBytes" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies the size of the partition.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="UpdateType" type="mstns:UpdateType" minOccurs="0" maxOccurs="1" default="Normal">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies the update type. Default to normal.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="FileSystem" type="mstns:FileSystem" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies the file system format for the partition. If not specified, it'll not be formatted.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="RequiredToFlash" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Obsolete]
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="Backup" type="mstns:Backup" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Required for OEM owned partitions for the images that are updated by OS.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="BackupInSameStore" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Required for OEM owned partitions that require backups. For validation only.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="ByteAlignment" type="xs:string" minOccurs="0" maxOccurs="1" default="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies the byte alignment for the partition.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="TargetMirrorVolume" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies the target mirror volume.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+
+    <!---->
+    <!-- PartitionName -->
+    <!---->
+    <xs:simpleType name="PartitionName">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <!-- <<TODO>> -->
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="36"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!---->
+    <!-- UpdateType -->
+    <!---->
+    <xs:simpleType name="UpdateType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <!-- <<TODO>> -->
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Never"/>
+            <xs:enumeration value="Manufacture"/>
+            <xs:enumeration value="Normal"/>
+            <xs:enumeration value="Critical"/>
+            <xs:enumeration value="UpdateCapsule"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!---->
+    <!-- Backup -->
+    <!---->
+    <xs:simpleType name="Backup">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <!-- <<TODO>> -->
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="RequiredExact"/>
+            <xs:enumeration value="RequiredExactExceptType"/>
+            <xs:enumeration value="NotRequired"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!---->
+    <!-- FileSystem -->
+    <!---->
+    <xs:simpleType name="FileSystem">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <!-- <<TODO>> -->
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NTFS"/>
+            <xs:enumeration value="FAT"/>
+            <xs:enumeration value="FAT32"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>

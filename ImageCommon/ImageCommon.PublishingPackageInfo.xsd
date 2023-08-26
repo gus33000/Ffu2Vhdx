@@ -1,0 +1,230 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://schemas.microsoft.com/embedded/2004/10/ImageUpdate" elementFormDefault="qualified" xmlns="http://schemas.microsoft.com/embedded/2004/10/ImageUpdate" xmlns:mstns="http://schemas.microsoft.com/embedded/2004/10/ImageUpdate" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="PublishingPackageInfo">    
+    <xs:complexType>
+          <xs:all>
+            
+            <xs:element name="IsUpdateList" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="IsTargetFeatureEnabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="MSFeatureGroups" minOccurs="0" maxOccurs="1" >
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="FeatureGroup" minOccurs="0" maxOccurs="unbounded" >
+                    <xs:complexType>
+                      <xs:sequence>
+                        <xs:element name="FeatureIDs" minOccurs="0" maxOccurs="unbounded">
+                          <xs:complexType>
+                            <xs:sequence>
+                              <xs:element name="FeatureID" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                            </xs:sequence>
+                          </xs:complexType>
+                        </xs:element>
+
+                        <xs:element name="SubGroups" minOccurs="0" maxOccurs="1" >
+                          <xs:complexType>
+                            <xs:sequence>
+                              <xs:element name="FeatureGroup" minOccurs="0" maxOccurs="unbounded" >
+                                <xs:complexType>
+                                  <xs:all>
+                                    <xs:element name="FeatureIDs">
+                                      <xs:complexType>
+                                        <xs:sequence>
+                                          <xs:element name="FeatureID" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                                        </xs:sequence>
+                                      </xs:complexType>
+                                    </xs:element>
+                                    <xs:element name="SubGroups" minOccurs="0" maxOccurs="1" />
+                                  </xs:all>
+                                  <xs:attribute name="Name" type="xs:string" use="optional"/>
+                                  <xs:attribute name="FMID" type="xs:string" use="optional"/>
+                                </xs:complexType>
+                              </xs:element>
+                            </xs:sequence>
+                          </xs:complexType>
+                        </xs:element>
+
+                      </xs:sequence>
+                      <xs:attribute name="Name" type="xs:string" use="optional"/>
+                      <xs:attribute name="FMID" type="xs:string" use="optional"/>
+                      <xs:attribute name="PublishingFeatureGroup" type="xs:boolean" use="optional"/>
+                      <xs:attribute name="Constraint" use="optional" >
+                        <xs:simpleType>
+                          <xs:restriction base="xs:string">
+                            <xs:enumeration value="OneOrMore"/>
+                            <xs:enumeration value="ZeroOrOne"/>
+                            <xs:enumeration value="OneAndOnlyOne"/>
+                          </xs:restriction>
+                        </xs:simpleType>
+                      </xs:attribute>
+                    </xs:complexType>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            <xs:element name="OEMFeatureGroups" minOccurs="0" maxOccurs="1" >
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="FeatureGroup" minOccurs="0" maxOccurs="unbounded" >
+                    <xs:complexType>
+                      <xs:sequence>
+                        <xs:element name="FeatureIDs" minOccurs="0" maxOccurs="unbounded">
+                          <xs:complexType>
+                            <xs:sequence>
+                              <xs:element name="FeatureID" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                            </xs:sequence>
+                          </xs:complexType>
+                        </xs:element>
+                        <xs:element name="SubGroups" minOccurs="0" maxOccurs="1" >
+                          <xs:complexType>
+                            <xs:sequence>
+                              <xs:element name="FeatureGroup" minOccurs="0" maxOccurs="unbounded" >
+                                <xs:complexType>
+                                  <xs:all>
+                                    <xs:element name="FeatureIDs">
+                                      <xs:complexType>
+                                        <xs:sequence>
+                                          <xs:element name="FeatureID" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                                        </xs:sequence>
+                                      </xs:complexType>
+                                    </xs:element>
+                                  </xs:all>
+                                  <xs:attribute name="Name" type="xs:string" use="optional"/>
+                                  <xs:attribute name="FMID" type="xs:string" use="optional"/>
+                                </xs:complexType>
+                              </xs:element>
+                            </xs:sequence>
+                          </xs:complexType>
+                        </xs:element>
+                      </xs:sequence>
+                      <xs:attribute name="Name" type="xs:string" use="optional"/>
+                      <xs:attribute name="FMID" type="xs:string" use="optional"/>
+                      <xs:attribute name="Constraint" use="optional" >
+                        <xs:simpleType>
+                          <xs:restriction base="xs:string">
+                            <xs:enumeration value="OneOrMore"/>
+                            <xs:enumeration value="ZeroOrOne"/>
+                            <xs:enumeration value="OneAndOnlyOne"/>
+                          </xs:restriction>
+                        </xs:simpleType>
+                      </xs:attribute>
+                    </xs:complexType>
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="FeatureIdentifierPackages" minOccurs="0" maxOccurs="1">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="FeatureIdentifierPackage" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                      <xs:attribute name="FeatureID" type="xs:string" />
+                      <xs:attribute name="FMID" type="xs:string" use="optional"/>                      
+                      <xs:attribute name="ID" type="xs:string"/>
+                      <xs:attribute name="Partition" type="xs:string" use="optional" />
+                      <xs:attribute name="OwnerType" use="optional" >
+                        <xs:simpleType>
+                          <xs:restriction base="xs:string">
+                            <xs:enumeration value="Microsoft"/>
+                            <xs:enumeration value="OEM"/>
+                          </xs:restriction>
+                        </xs:simpleType>
+                      </xs:attribute>
+
+                      <xs:attribute name="FixUpAction" use="optional" >
+                        <xs:simpleType>
+                          <xs:restriction base="xs:string">
+                            <xs:enumeration value="AndFeature"/>
+                          </xs:restriction>
+                        </xs:simpleType>
+                      </xs:attribute>
+                      <xs:attribute name="FixUpActionValue" type="xs:string" use="optional" />
+
+                    </xs:complexType>                    
+                  </xs:element>
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+            
+            
+            <xs:element name="Packages" minOccurs="1" maxOccurs="1">
+              <xs:complexType>
+                <xs:sequence>
+                  <xs:element name="PackageInfo" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                      
+                      <xs:all>
+                        
+                        <xs:element name="ID" type="xs:string" />
+                        <xs:element name="IsFeatureIdentifierPackage" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="Path" type="xs:string" />
+                        <xs:element name="PreviousPath" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="Partition" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="FeatureID" type="xs:string" />
+                        <xs:element name="FMID" type="xs:string" minOccurs="0" maxOccurs="1"/>
+
+                        <xs:element name="ReleaseType" minOccurs="0" maxOccurs="1">
+                        <xs:simpleType>
+                          <xs:restriction base="xs:string">
+                            <xs:enumeration value="Production"/>
+                            <xs:enumeration value="Test"/>
+                          </xs:restriction>
+                        </xs:simpleType>
+                      </xs:element>
+
+                        <xs:element name="OwnerType" minOccurs="0" maxOccurs="1">
+                        <xs:simpleType>
+                          <xs:restriction base="xs:string">
+                            <xs:enumeration value="Microsoft"/>
+                            <xs:enumeration value="OEM"/>
+                          </xs:restriction>
+                        </xs:simpleType>
+                      </xs:element>
+
+                        <xs:element name="UserInstallable" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+
+                        <xs:element name="SatelliteType" minOccurs="0" maxOccurs="1">
+                        <xs:simpleType>
+                          <xs:restriction base="xs:string">
+                            <xs:enumeration value="Base"/>
+                            <xs:enumeration value="Language"/>
+                            <xs:enumeration value="Resolution"/>
+                          </xs:restriction>
+                        </xs:simpleType>
+                      </xs:element>
+
+                        <xs:element name="SatelliteValue" type="xs:string" minOccurs="0" />
+
+                        <xs:element name="UpdateType" minOccurs="0" maxOccurs="1">
+                        <xs:simpleType>
+                          <xs:restriction base="xs:string">
+                            <xs:enumeration value="Canonical"/>
+                            <xs:enumeration value="Diff"/>
+                            <xs:enumeration value="PKR"/>
+                          </xs:restriction>
+                        </xs:simpleType>
+                      </xs:element>
+
+                      <xs:element name="SourceFMFile" type="xs:string" />
+                        <xs:element name="Version" minOccurs="1" maxOccurs="1">
+                          <xs:complexType>
+                            <xs:attribute name="Major" type="xs:string"/>
+                            <xs:attribute name="Minor" type="xs:string"/>
+                            <xs:attribute name="QFE" type="xs:string"/>
+                            <xs:attribute name="Build" type="xs:string"/>
+                          </xs:complexType>
+                        </xs:element>
+                      </xs:all>
+
+
+                    </xs:complexType>
+                  </xs:element>
+
+                </xs:sequence>
+              </xs:complexType>
+            </xs:element>
+
+          </xs:all>
+      </xs:complexType>
+  </xs:element>
+</xs:schema>

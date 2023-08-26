@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Platforms>x64;AnyCPU;ARM32;ARM64;x86</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DiscUtils\DiscUtils.Vhdx\DiscUtils.Vhdx.csproj" />
+    <ProjectReference Include="..\ImageCommon\ImageCommon.csproj" />
+    <ProjectReference Include="..\ImageStorageServiceManaged\ImageStorageServiceManaged.csproj" />
+  </ItemGroup>
+
+</Project>

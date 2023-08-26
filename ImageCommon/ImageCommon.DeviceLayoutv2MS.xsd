@@ -1,0 +1,445 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
+    targetNamespace="http://schemas.microsoft.com/embedded/2004/10/ImageUpdate/v2"
+    elementFormDefault="qualified"
+    xmlns="http://schemas.microsoft.com/embedded/2004/10/ImageUpdate/v2"
+    xmlns:mstns="http://schemas.microsoft.com/embedded/2004/10/ImageUpdate/v2"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <!---->
+    <!-- The MS device layout element -->
+    <!---->
+    <xs:element name="MSDeviceLayout" type="mstns:MSDeviceLayout" />
+
+    <!---->
+    <!-- MSDeviceLayout -->
+    <!---->
+    <xs:complexType name="MSDeviceLayout">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                Microsoft owned device layout.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="StoragePools" type="mstns:StoragePools" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies a group of Storage Pool. This element can appear at most once in the device layout.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="Stores" type="mstns:Stores" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies a group of physical storage devices. This element can appear at most once in the device layout.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="DefaultPartitionByteAlignment" type="xs:string" minOccurs="0" maxOccurs="1" default="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies the default partition alignment which can be overridden by ByteAlignment in Partition element.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="ChunkSize" type="xs:positiveInteger" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies the size (KB) of a chunk in a FFU image. Only 128 (KB) is currently supported.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="MergeVersionTag" type="xs:positiveInteger" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies the version device layout validation rules to be used.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="StateSeparationLevel" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1" default="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies whether the image is State-Separated, which should be true for WCOS images.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+
+    <!---->
+    <!-- StoragePools -->
+    <!---->
+    <xs:complexType name="StoragePools">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                Specifies a group of storage pools.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="StoragePool" type="mstns:StoragePool" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Specifies a storage pool. At least one StoragePool element needs to be defined for each StoragePools element.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!---->
+    <!-- StoragePool -->
+    <!---->
+    <xs:complexType name="StoragePool">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                Defines the composition of a storage pool.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Name" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Specifies the name of the storage pool. Make sure the name matches the name of the partition that represents this storage pool on a physical disk/LUN.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="Stores" type="mstns:Stores" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies a group of virtual disks, each backed by a Storage Space, contained within this Storage Pool. The ordering of virtual disks (Stores) inside a storage pool does not matter.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!---->
+    <!-- Stores -->
+    <!---->
+    <xs:complexType name="Stores">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                Specifies a group of physical storage devices, or LUNs surfaced as a physical disk or virtual disks (storage space) if it's under a StoragePool element. The ordering of virtual disks (Stores) inside a storage pool does not matter.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Store" type="mstns:Store" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Specifies a physical disk or a virtual disk.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!---->
+    <!-- Store -->
+    <!---->
+    <xs:complexType name="Store">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                Define the configuration of either a physical disk, a LUN, or a virtual disk (storage space).
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Id" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Disk identifier - GUID for GPT, integer for MBR.
+                        For MBR,
+                        MAINOS: 0xae420040
+
+                        For WCOS,
+                        Main disk (One that contains the storage pool) : 5a585bae-900b-41b5-b736-a4cecffc34b4
+                        MAINOS          : ae420040-13dd-41f2-ae7f-0dc35854c8d7
+                        MMOS            : 7d74f4a0-4195-4cd2-a19d-89437d9f1aed
+                        WINDOWS_SYSTEM  : 619b6838-1dca-4904-83ad-d5d0bea0aa4a
+                        OSDATA          : 913bbeb3-2331-43d7-a53a-8d6e1eaf5f4e
+                        BSP             : B59E0F00-C531-42AE-9223-7B1DF438A46C
+                        PREINSTALLED    : 6ee30957-92a8-49c4-b02f-6eacecdc90d4
+                        VIRT_EFIESP     : 631cb517-f8bb-45f3-a70a-222ec9906f23
+                        RESERVE         : dd357160-f8a0-11ea-a554-84a93e8a6569
+                        For RAMDisk,
+                        Main disk       : 7c7c7fda-200e-4074-938f-c400bd2667c3
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="StoreType" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Specifies the type of the store. It is also used for internal validation.
+
+                        Naming convention:
+
+                        For WCOS,
+                        Main disk (One that contains the storage pool) : "Default"
+                        MAINOS          : "MainOSDisk"
+                        MMOS            : "MMOSDisk"
+                        WINDOWS_SYSTEM  : "EFIESPDisk"
+                        OSDATA          : "OSDataDisk"
+                        BSP             : "BSPDisk"
+                        PREINSTALLED    : "PreInstalledDisk"
+                        VIRT_EFIESP     : "VIRT_EFIESPDisk"
+                        RESERVE         : "ReserveDisk"
+
+                        For RAMBoot,
+                        Main disk       : "RamDisk"
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="Provisioning" type="mstns:Provisioning" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies how the virtual disk is provisioned (e.g. thinly-provisioned). Only applicable to virtual disks (storage space).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="SizeInBytes" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies the size of the physical disk or LUN, or virtual disk (storage space). When used with a virtual disk, it is meant to be the storage space capacity.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="Partitions" type="mstns:Partitions" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Specifies the grouping of partitions nested under the disk.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!---->
+    <!-- Partitions -->
+    <!---->
+    <xs:complexType name="Partitions">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                Specifies the grouping of partitions nested under a disk. Ordering of the partitions in the image is implicitly specified by the ordering of partition elements.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Partition" type="mstns:Partition" minOccurs="1" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Specifies the configuration of a partition.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <!---->
+    <!-- Partition -->
+    <!---->
+    <xs:complexType name="Partition">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                Defines partition configuration.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="Name" type="mstns:PartitionName" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Specifies the name of the partition. Must be unique across all physical disks, LUNs or virtual disks (storage spaces).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="Type" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Specifies the type of the partition. For GPT, it's a GUID. For MBR, it's an integer.
+
+                        For WCOS,
+                        EFIESP          : 57434f53-e3e3-4631-a5c5-26d2243873aa
+                        MAINOS          : 57434f53-8f45-405e-8a23-186d8a4330d3
+                        BSP             : 57434f53-4df9-45b9-8e9e-2370f006457c
+                        PREINSTALLED    : 57434f53-7fe0-4196-9b42-427b51643484
+                        OSDATA          : 57434f53-23f2-44d5-a830-67bbdaa609f9
+                        DATA            : ebd0a0a2-b9e5-4433-87c0-68b6b72699c7
+                        VIRT_EFIESP     : c12a7328-f81f-11d2-ba4b-00a0c93ec93b
+                        BS_EFIESP       : AA16C266-5F58-4CF8-829F-C323CBE22AE6
+                        RESERVE         : 57434f53-4b81-460b-a319-ffb6fe136d14
+                        OSPool          : 5708A6E0-9001-4b99-b064-1fe564896bdb
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="Id" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Required] Specifies the ID of the partition. For GPT, it's a GUID. For MBR, it's an integer.
+
+                        For WCOS,
+                        MAINOS          : a76b8ce2-0187-4c13-8fca-8651c9b0620a
+                        WINDOWS_SYSTEM  : 8183040a-8b44-4592-92f7-c6d9ee0560f7
+                        MMOS            : 27a47557-8243-4c8e-9d30-846844c29c52
+                        OSDATA          : B0479FF4-43BB-4710-90CD-20653989DD7D
+                        BSP             : dff26bef-f2aa-413f-8e45-260df4a4a141
+                        PREINSTALLED    : c8adae64-47f4-4cfa-b67c-1e743ad5dfc9
+                        VIRT_EFIESP     : 12aef83a-6cf2-4ea1-932f-b3a586a65308
+                        BOOTSTRAP_EFIESP: aa16c266-5f58-4cf8-829f-c323cbe22ae6
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="AttachDriveLetter" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies whether a drive letter should be attached when it's in the OS.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="UseAllSpace" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies whether to extend a partition (needs to be the last one on a disk) to fill up the disk during imaging. For WCOS images, partitions in most of the virtual disks should use have this element set to true. Size of the partition will be extended to fill the parent Store (virtual disk).
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="TotalBytes" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies the size of the partition.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="SingleSectorAlignment" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Obsolete]
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="UpdateType" type="mstns:UpdateType" minOccurs="0" maxOccurs="1" default="Normal">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies the update type. Default to normal.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="FileSystem" type="mstns:FileSystem" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies the file system format for the partition. If not specified, it'll not be formatted.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="ByteAlignment" type="xs:string" minOccurs="0" maxOccurs="1" default="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies the byte alignment for the partition.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="ClusterSize" type="xs:string" minOccurs="0" maxOccurs="1" default="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies the file system cluster size. If not specified, it'll use the default cluster for the file system.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="OffsetInBytes" type="xs:string" minOccurs="0" maxOccurs="1" default="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Specifies the offset from the beginning of the disk (in sectors) a partition should start. It's used by platforms that have strict requirements on where partitions should be laid out. The offset must be aligned to minimum 128KB boundary. Please stay away from it if your platform doesn't have this requirement.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+
+            <xs:element name="PrepareFveMetadata" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        [Optional] Indicates that image creation process after formatting partition should also pre generate FVE metadata on the volume. This is required for Device Encryption to successfully get enabled on WCOS devices with Read-Only enforcement on OS volume.
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+
+    <!---->
+    <!-- PartitionName -->
+    <!---->
+    <xs:simpleType name="PartitionName">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <!-- <<TODO>> -->
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="36"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!---->
+    <!-- Provisioning -->
+    <!---->
+    <xs:simpleType name="Provisioning">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <!-- <<TODO>> -->
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Thin"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!---->
+    <!-- UpdateType -->
+    <!---->
+    <xs:simpleType name="UpdateType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <!-- <<TODO>> -->
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Never"/>
+            <xs:enumeration value="Manufacture"/>
+            <xs:enumeration value="Normal"/>
+            <xs:enumeration value="Critical"/>
+            <xs:enumeration value="UpdateCapsule"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!---->
+    <!-- FileSystem -->
+    <!---->
+    <xs:simpleType name="FileSystem">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <!-- <<TODO>> -->
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NTFS"/>
+            <xs:enumeration value="FAT"/>
+            <xs:enumeration value="FAT32"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>

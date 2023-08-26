@@ -1,0 +1,575 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://schemas.microsoft.com/phone/2011/10/BootConfiguration" elementFormDefault="qualified" xmlns="http://schemas.microsoft.com/phone/2011/10/BootConfiguration" xmlns:mstns="http://schemas.microsoft.com/phone/2011/10/BootConfiguration" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  
+  <xs:simpleType name="GuidString">
+    <xs:restriction base="xs:string">
+      <xs:pattern value="\{[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}\}" />
+    </xs:restriction>
+  </xs:simpleType>
+  
+  <xs:element name="BootConfigurationDatabase">
+      <xs:complexType>
+          <xs:all>
+            <!-- The BCD is an array of objects. -->
+              <xs:element name="Objects" minOccurs="0" maxOccurs="1">
+                  <xs:complexType>
+                      <xs:sequence>
+                        <xs:element name="Object" minOccurs="1" maxOccurs="unbounded">
+                            <xs:complexType>
+                                <xs:all>
+                                  <xs:element name="FriendlyName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+
+                                  <!-- If this is a well-known friendly name, then no Id is necessary. -->
+                                  <xs:element name="Id" minOccurs="0" maxOccurs="1" type="GuidString" />
+
+                                  <!-- If this is not a well-known type, then this value must be specified. -->
+                                  <!-- High order byte (Byte 0): Type (1:Application, 2:Inherit, 3:Device -->
+                                  <!-- The remainder of the bytes are dependent on the type. -->
+                                  <xs:element name="RawType" type="xs:integer" minOccurs="0" maxOccurs="1"/>
+
+                                  <!-- Each object has a set of elements associated with it. -->
+                                  <xs:element name="Elements" minOccurs="0" maxOccurs="1">
+                                    <xs:complexType>
+                                      <xs:sequence>
+
+                                        <!-- And element has a value and a datatype. -->
+                                        <!-- The type of value is determined by the datatype. -->
+                                        <!-- A datatype is a uint composed of a class, format, and subclass. -->
+                                        <!-- The format can be determined from one of the value types used below. -->
+                                        <!-- The datatype becomes the name of the key in the registry. -->
+                                        <xs:element name="Element" minOccurs="1" maxOccurs="unbounded">
+                                          <xs:complexType>
+                                            <xs:all>
+
+                                              <xs:element name="DataType">
+                                                <xs:complexType>
+                                                  <xs:choice>
+                                                    <xs:element name="WellKnownType">
+                                                      <xs:simpleType>
+                                                        <xs:restriction base="xs:string">
+                                                          <!-- Class(Library), Subclass(0x7E), Format(Boolean) -->
+                                                          <xs:enumeration value="Allow Flight Signatures" />
+
+                                                          <!-- Class(Library), Subclass(0x49), Format(Boolean) -->
+                                                          <xs:enumeration value="Allow Pre-release Signatures" />
+
+                                                          <!-- Class(Application), Subclass(0x206), Format(Boolean) -->
+                                                          <xs:enumeration value="Allow User To Reset Phone" />
+
+                                                          <!-- Class(Library), Subclass(0x02), Format(String) -->
+                                                          <xs:enumeration value="Application Path"/>
+
+                                                          <!-- Class(Library), Subclass(0x09), Format(Boolean) -->
+                                                          <xs:enumeration value="Auto-recovery Enabled"/>
+
+                                                          <!-- Class(Library), Subclass(0x01), Format(Device) -->
+                                                          <xs:enumeration value="Boot Device"/>
+
+                                                          <!-- Class(Application), Subclass(0xc2), Format(Integer) -->
+                                                          <xs:enumeration value="Boot Menu Policy" />
+
+                                                          <!-- Class(Application), Subclass(0x02), Format(ObjectList) -->
+                                                          <xs:enumeration value="Boot Sequence" />
+
+                                                          <!-- Class(Application), Subclass(0xE0), Format(Integer) -->
+                                                          <xs:enumeration value="Boot Status Policy" />
+
+                                                          <!-- Class(Library), Subclass(0x6a), Format(Boolean) -->
+                                                          <xs:enumeration value="Boot UX Fade Disable" />
+
+                                                          <!-- Class(Library), Subclass(0x7a), Format(Boolean) -->
+                                                          <xs:enumeration value="Boot UX Logo Transition Enable" />
+
+                                                          <!-- Class(Library), Subclass(0x79), Format(Integer) -->
+                                                          <xs:enumeration value="Boot UX Logo Transition Time" />
+
+                                                          <!-- Class(Library), Subclass(0x69), Format(Boolean) -->
+                                                          <xs:enumeration value="Boot UX Progress Animation Disable" />
+
+                                                          <!-- Class(Library), Subclass(0x68), Format(Boolean) -->
+                                                          <xs:enumeration value="Boot UX Text Disable" />
+
+                                                          <!-- Class(Library), Subclass(0x7d), Format(Integer) -->
+                                                          <xs:enumeration value="Boot UX Error Screen" />
+
+                                                          <!-- Class(Application), Subclass(0xaaa), Format(Integer) -->
+                                                          <xs:enumeration value="BootFlowAPI Global" />
+
+                                                          <!-- Class(Library), Subclass(0x44), Format(String) -->
+                                                          <xs:enumeration value="BSD Filepath"/>
+
+                                                          <!-- Class(Library), Subclass(0x45), Format(Boolean) -->
+                                                          <xs:enumeration value="BSD Preserve Previous Entries"/>
+                                                          
+                                                          <!-- Class(Library), Subclass(0x50), Format(Boolean)-->
+                                                          <xs:enumeration value="Console Extended Input" />
+
+                                                          <!-- Class(Application), Subclass(0x30), Format(IntegerList) -->
+                                                          <xs:enumeration value="Custom Action List"/>
+
+                                                          <!-- Class(Application), Subclass(0x13), Format(String) -->
+                                                          <xs:enumeration value="Debug Transport Path" />
+
+                                                          <!-- Class(Library), Subclass(0x14), Format(Integer) -->
+                                                          <xs:enumeration value="Debugger Baud Rate" />
+
+                                                          <!-- Class(Library), Subclass(0x19), Format(String) -->
+                                                          <xs:enumeration value="Debugger Bus Parameters" />
+
+                                                          <!-- Class(Library), Subclass(0x10), Format(Boolean) -->
+                                                          <xs:enumeration value="Debugger Enabled" />
+
+                                                          <!-- Class(Library), Subclass(0x17), Format(Boolean) -->
+                                                          <xs:enumeration value="Debugger Ignore Usermode Exceptions" />
+
+                                                          <!-- Class(Library), Subclass(0x1c), Format(Boolean) -->
+                                                          <xs:enumeration value="Debugger Network DHCP" />
+
+                                                          <!-- Class(Library), Subclass(0x1a), Format(Integer) -->
+                                                          <xs:enumeration value="Debugger Network Host IP" />
+
+                                                          <!-- Class(Library), Subclass(0x1d), Format(String) -->
+                                                          <xs:enumeration value="Debugger Network Key" />
+
+                                                          <!-- Class(Library), Subclass(0x1b), Format(Integer) -->
+                                                          <xs:enumeration value="Debugger Network Port" />
+
+                                                          <!-- Class(Library), Subclass(0x18), Format(Integer) -->
+                                                          <xs:enumeration value="Debugger Start Policy" />
+
+                                                          <!-- Class(Library), Subclass(0x11), Format(Integer) -->
+                                                          <xs:enumeration value="Debugger Type" />
+
+                                                          <!-- Class(Library), Subclass(0x16), Format(String) -->
+                                                          <xs:enumeration value="Debugger USB Target Name" />
+
+                                                          <!-- Class(Application), Subclass(0x06), Format(Boolean) -->
+                                                          <xs:enumeration value="Debugging Enabled" />
+
+                                                          <!-- Class(Application), Subclass(0x03), Format(Object) -->
+                                                          <xs:enumeration value="Default Object"/>
+
+                                                          <!-- Class(Library), Subclass(0x04), Format(String) -->
+                                                          <xs:enumeration value="Description" />
+
+                                                          <!-- Class(Application), Subclass(0x10), Format(Boolean) -->
+                                                          <xs:enumeration value="Detect Kernel and HAL" />
+
+                                                          <!-- Class(OEM), Subclass(0x03), Format(ObjectList) -->
+                                                          <xs:enumeration value="Developer Menu Action" />
+
+                                                          <!-- Class(Library), Subclass(0x48), Format(Boolean) -->
+                                                          <xs:enumeration value="Disable Integrity Checks" />
+
+                                                          <!-- Class(Library), Subclass(0x40), Format(Boolean) -->
+                                                          <xs:enumeration value="Display Advanced Options" />
+
+                                                          <!-- Class(Application), Subclass(0x20), Format(Boolean) -->
+                                                          <xs:enumeration value="Display Boot Menu" />
+
+                                                          <!-- Class(Library), Subclass(0x41), Format(Boolean) -->
+                                                          <xs:enumeration value="Display Option Edit" />
+
+                                                          <!-- Class(Application), Subclass(0x01), Format(ObjectList) -->
+                                                          <xs:enumeration value="Display Order" />
+
+                                                          <!-- Class(Library), Subclass(0x20), Format(Boolean) -->
+                                                          <xs:enumeration value="EMS Enabled" />
+
+                                                          <!-- Class(Application, Subclass(0x204), Format(Boolean) -->
+                                                          <xs:enumeration value="Enable Platform ID Check" />
+
+                                                          <!-- Class(Application, Subclass(0x205), Format(Boolean) -->
+                                                          <xs:enumeration value="Disable Platform ID Check" />
+
+                                                          <!-- Class(OEM), Subclass(0x01), Format(ObjectList) -->
+                                                          <xs:enumeration value="Flashing Action" />
+
+                                                          <!-- Class(Application, Subclass(0x201), Format(Boolean) -->
+                                                          <xs:enumeration value="FFU Update Mode" />
+ 
+                                                          <!-- Class(Application, Subclass(0x203), Format(Boolean) -->
+                                                          <xs:enumeration value="Force FFU" />
+
+                                                          <!-- Remove this after WP8 121110 is closed. -->
+                                                          <!-- Class(Library, Subclass(0x72), Format(Boolean) -->
+                                                          <xs:enumeration value="Force No Keyboard" />
+
+                                                          <!-- Class(Application), Subclass(0xf0), Format(Integer) -->
+                                                          <xs:enumeration value="Hypervisor Launch Type" />
+
+                                                          <!-- Class(Application), Subclass(0xf2), Format(Boolean) -->
+                                                          <xs:enumeration value="Hypervisor Debugger Enabled" />
+
+                                                          <!-- Class(Application), Subclass(0xf3), Format(Integer) -->
+                                                          <xs:enumeration value="Hypervisor Debugger Type" />
+
+                                                          <!-- Class(Application), Subclass(0xf4), Format(Integer) -->
+                                                          <xs:enumeration value="Hypervisor Debugger Port Number" />
+
+                                                          <!-- Class(Application), Subclass(0xf5), Format(Integer) -->
+                                                          <xs:enumeration value="Hypervisor Debugger Baud Rate" />
+
+                                                          <!-- Class(Application), Subclass(0xf9), Format(String) -->
+                                                          <xs:enumeration value="Hypervisor Debugger Bus Parameters" />
+
+                                                          <!-- Class(Application), Subclass(0xfd), Format(Integer) -->
+                                                          <xs:enumeration value="Hypervisor Debugger Network Host IP" />
+
+                                                          <!-- Class(Application), Subclass(0xfe), Format(Integer) -->
+                                                          <xs:enumeration value="Hypervisor Debugger Network Host Port" />
+
+                                                          <!-- Class(Application), Subclass(0xff), Format(Integer) -->
+                                                          <xs:enumeration value="Hypervisor Debugger Pages" />
+
+                                                          <!-- Class(Application), Subclass(0x110), Format(String) -->
+                                                          <xs:enumeration value="Hypervisor Debugger Network Key" />
+
+                                                          <!-- Class(Application), Subclass(0x114), Format(Boolean) -->
+                                                          <xs:enumeration value="Hypervisor Debugger Network DHCP" />
+
+                                                          <!-- Class(Application), Subclass(0x117), Format(String) -->
+                                                          <xs:enumeration value="Hypervisor Load Options" />
+
+                                                          <!-- Class(Library), Subclass(0x06), Format(ObjectList) -->
+                                                          <xs:enumeration value="Inherit"/>
+
+                                                          <!-- Class(Application), Subclass(0xa0), Format(Boolean) -->
+                                                          <xs:enumeration value="Kernel Debugger Enabled" />
+
+                                                          <!-- Class(Application), Subclass(0xb0), Format(Boolean) -->
+                                                          <xs:enumeration value="Kernel EMS Enabled" />
+
+                                                          <!-- Class(Application), Subclass(0x140), Format(String) -->
+                                                          <xs:enumeration value="Manufacturing Mode" />
+
+                                                          <!-- Class(Application), Subclass(0x145), Format(Boolean) -->
+                                                          <xs:enumeration value="Enable Boot Debug Policy" />
+
+                                                          <!-- Class(Application), Subclass(0x146), Format(Boolean) -->
+                                                          <xs:enumeration value="Enable Boot Order Clean" />
+
+                                                          <!-- Class(Application), Subclass(0x147), Format(Boolean) -->
+                                                          <xs:enumeration value="Enable Device Id" />
+
+                                                          <!-- Class(Application), Subclass(0x148), Format(Boolean) -->
+                                                          <xs:enumeration value="Enable FFU Loader" />
+
+                                                          <!-- Class(Application), Subclass(0x149), Format(Boolean) -->
+                                                          <xs:enumeration value="Enable IU Loader" />
+
+                                                          <!-- Class(Application), Subclass(0x14A), Format(Boolean) -->
+                                                          <xs:enumeration value="Enable Mass Storage" />
+
+                                                          <!-- Class(Application), Subclass(0x14B), Format(Boolean) -->
+                                                          <xs:enumeration value="Enable RPMB Provisioning" />
+
+                                                          <!-- Class(Application), Subclass(0x14C), Format(Boolean) -->
+                                                          <xs:enumeration value="Enable Secure Boot Policy" />
+
+                                                          <!-- Class(Application), Subclass(0x14D), Format(Boolean) -->
+                                                          <xs:enumeration value="Enable Start Charge" />
+
+                                                          <!-- Class(Application), Subclass(0x14E), Format(Boolean) -->
+                                                          <xs:enumeration value="Enable Reset TPM" />
+
+                                                          <!-- Class(Application), Subclass(0x207), Format(Boolean) -->
+                                                          <xs:enumeration value="Enable UFP Mode" />
+
+                                                          <!-- Class(Application), Subclass(0x208), Format(Boolean) -->
+                                                          <xs:enumeration value="Use EfiHash for Hashing" />
+
+                                                           <!-- Class(Application), Subclass(0x209), Format(Integer) -->
+                                                          <xs:enumeration value="UFP Log Location" />
+                                                          
+                                                           <!-- Class(Application), Subclass(0x20A), Format(Integer) -->
+                                                          <xs:enumeration value="UFP USB Port" />
+
+                                                          <!-- Class(Application, Subclass(0x500), Format(Integer) -->
+                                                          <xs:enumeration value="Memory Capture Mode Address" />
+
+                                                          <!-- Class(Application), Subclass(0x510), Format(Integer) -->
+                                                          <xs:enumeration value="OEM Charging Boot Threshold" />
+
+                                                          <!-- Class(Application), Subclass(0x511), Format(Integer) -->
+                                                          <xs:enumeration value="OEM Charging Mode Threshold" />
+
+                                                          <!-- Class(Application), Subclass(0x512), Format(Boolean) -->
+                                                          <xs:enumeration value="OEM Charging Mode Enabled" />
+
+                                                          <!-- Class(Application), Subclass(0x01), Format(Device) -->
+                                                          <xs:enumeration value="OS Loader Type" />
+
+                                                          <!-- Class(Application), Subclass(0x21), Format(Integer) -->
+                                                          <xs:enumeration value="PAE Policy"/>
+                                                            
+                                                          <!-- Class(Application), Subclass(0x204), Format(Boolean) -->
+                                                          <xs:enumeration value="Persist Boot Sequence" />
+
+                                                          <!-- Class(Library), Subclass(0x13), Format(Integer) -->
+                                                          <xs:enumeration value="Port Number" />
+
+                                                          <!-- Class(Library), Suclass(0x05), Format(String) -->
+                                                          <xs:enumeration value="Preferred Locale"/>
+
+                                                          <!-- Class(Application), Subclass(0x28), Format(Boolean) -->
+                                                          <xs:enumeration value="Process Custom Actions First" />
+
+                                                          <!-- Class(Device), Subclass(0x03), Format(Device) -->
+                                                          <xs:enumeration value="Ramdisk SDI Device" />
+
+                                                          <!-- Class(Device), Subclass(0x04), Format(String) -->
+                                                          <xs:enumeration value="Ramdisk SDI Path" />
+
+                                                          <!-- Class(Device), Subclass(0x10), Format(Device) -->
+                                                          <xs:enumeration value="Spaces Disk Device" />
+
+                                                          <!-- Class(Library), Subclass(0x08), Format(ObjectList) -->
+                                                          <xs:enumeration value="Recovery Sequence" />
+
+                                                          <!-- Class(Application), Subclass(0x31), Format(String) -->
+                                                          <xs:enumeration value="Remove Memory" />
+
+                                                          <!-- Class(OEM), Subclass(0x02), Format(ObjectList) -->
+                                                          <xs:enumeration value="Reset My Phone Action" />
+
+                                                          <!-- Class(Application), Subclass(0x06), Format(Object) -->
+                                                          <xs:enumeration value="Resume Object" />
+
+                                                          <!-- Class(Application), Subclass(0x02), Format(String) -->
+                                                          <xs:enumeration value="System Root" />
+
+                                                          <!-- Class(Application), Subclass(0x04), Format(Integer) -->
+                                                          <xs:enumeration value="Timeout Value" />
+
+                                                          <!-- Class(Application), Subclass(0x22), Format(Boolean) -->
+                                                          <xs:enumeration value="WinPE Image" />
+
+                                                          <!-- Class(Application, Subclass(0x502), Format(String) -->
+                                                          <xs:enumeration value="WpDmp Log File" />
+
+                                                          <!-- Class(Application, Subclass(0x501), Format(String) -->
+                                                          <xs:enumeration value="WpDmp Settings File" />
+
+                                                          <!-- Class(Library), Subclass(0x30), Format(String) -->
+                                                          <xs:enumeration value="Load Options" />
+
+                                                          <!-- Class(Library), Subclass(0x46), Format(Boolean) -->
+                                                          <xs:enumeration value="Graphics Mode Disable" />
+
+                                                          <!-- Class(Application), Subclass(0x41), Format(Boolean) -->
+                                                          <xs:enumeration value="Quiet Boot Enable" />
+
+                                                          <!-- Class(Application), Subclass(0x153), Format(Device) -->
+                                                          <xs:enumeration value="OS Data Device"/>
+
+                                                          <!-- Class(Application), Subclass(0x154), Format(Device) -->
+                                                          <xs:enumeration value="BSP Device"/>
+
+                                                          <!-- Class(Application), Subclass(0x155), Format(String) -->
+                                                          <xs:enumeration value="BSP Filepath"/>
+
+                                                          <!-- Class(Application), Subclass(0x156), Format(String) -->
+                                                          <xs:enumeration value="Physical Device GUID"/>
+
+                                                          <!-- Class(Application), Subclass(0x61), Format(Integer) -->
+                                                          <xs:enumeration value="Number of Processors"/>
+
+                                                          <!-- Class(Library), Subclass(0x43), Format(Device) -->
+                                                          <xs:enumeration value="BSD Device"/>
+
+                                                          <!-- Class(Library), Subclass(0x84), Format(Device) -->
+                                                          <xs:enumeration value="WSP Device"/>
+
+                                                          <!-- Class(Library), Subclass(0x77), Format(IntegerList) -->
+                                                          <xs:enumeration value="Allowed In-Memory Settings"/>
+
+                                                          <!-- Class(Library), Subclass(0x82), Format(Boolean) -->
+                                                          <xs:enumeration value="No Firmware Sync"/>
+
+                                                        </xs:restriction>
+                                                      </xs:simpleType>
+                                                    </xs:element>
+                                                    <xs:element name="RawType">
+                                                      <xs:complexType>
+                                                        <xs:all>
+                                                          <xs:element name="Class" minOccurs="1" maxOccurs="1">
+                                                            <xs:simpleType>
+                                                              <xs:restriction base="xs:string">
+                                                                <xs:enumeration value="Library"/>
+                                                                <xs:enumeration value="Application"/>
+                                                                <xs:enumeration value="Device"/>
+                                                                <xs:enumeration value="SetupTemplate"/>
+                                                                <xs:enumeration value="OEM"/>
+                                                              </xs:restriction>
+                                                            </xs:simpleType>
+                                                          </xs:element>
+
+                                                          <xs:element name="SubClass" type="xs:string" minOccurs="1" maxOccurs="1"/>
+                                                        </xs:all>
+                                                      </xs:complexType>
+                                                    </xs:element>
+                                                  </xs:choice>
+                                                </xs:complexType>
+                                              </xs:element>
+
+                                              <xs:element name="ValueType">
+                                                <xs:complexType>
+                                                  <xs:choice minOccurs="1" maxOccurs="1">
+                                                    <xs:element name="BooleanValue" type="xs:boolean"/>
+                                                    <xs:element name="StringValue" type="xs:string"/>
+                                                    <xs:element name="ObjectValue" type="xs:string"/>
+                                                    <xs:element name="ObjectListValue">
+                                                      <xs:complexType>
+                                                        <xs:sequence>
+                                                          <xs:element name="StringValues" minOccurs="1" maxOccurs="1">
+                                                            <xs:complexType>
+                                                              <xs:sequence>
+                                                                <xs:element name="StringValue" minOccurs="1" maxOccurs="unbounded" type="xs:string"/>
+                                                              </xs:sequence>
+                                                            </xs:complexType>
+                                                          </xs:element>
+                                                        </xs:sequence>
+                                                      </xs:complexType>
+                                                    </xs:element>
+                                                    <xs:element name="IntegerValue" type="xs:string"/>
+                                                    <xs:element name="IntegerListValue">
+                                                      <xs:complexType>
+                                                        <xs:sequence>
+                                                          <xs:element name="StringValues" minOccurs="1" maxOccurs="1">
+                                                            <xs:complexType>
+                                                              <xs:sequence>
+                                                                <xs:element name="StringValue" minOccurs="1" maxOccurs="unbounded" type="xs:string"/>
+                                                              </xs:sequence>
+                                                            </xs:complexType>
+                                                          </xs:element>
+                                                        </xs:sequence>
+                                                      </xs:complexType>
+                                                    </xs:element>
+
+                                                    <!-- While there are many different types of devices supported by the BCD, Windows Phone -->
+                                                    <!-- will only be using a small subset of these.  A PartitionEx value will be generated -->
+                                                    <!-- for GPT-style devices.  The value for MBR-style devices will be auto-generated at -->
+                                                    <!-- image creation time becuase the value is dependent on the byte-offset of the -->
+                                                    <!-- partitions. The ramdisk device is currently used for the UpdateOS WIM image. -->
+                                                    <xs:element name="DeviceValue">
+                                                      <xs:complexType>
+                                                        <xs:choice>
+                                                          <xs:element name="GPTDevice" type="GptDeviceType" />
+                                                          <xs:element name="MBRDevice" type="MbrDeviceType" />
+                                                          <xs:element name="PhysicalDevice" type="PhysicalDeviceType" />
+                                                          <xs:element name="RamdiskDevice">
+                                                            <xs:complexType>
+                                                              <xs:all>
+                                                                <xs:element name="RamdiskOptions" type="xs:boolean" />
+                                                                <xs:element name="FilePath" type="xs:string" />
+                                                                <xs:element name="ParentDevice">
+                                                                  <xs:complexType>
+                                                                    <xs:choice>
+                                                                      <xs:element name="GPTDevice" type="GptDeviceType"/>
+                                                                      <xs:element name="MBRDevice" type="MbrDeviceType"/>
+                                                                    </xs:choice>
+                                                                  </xs:complexType>
+                                                                </xs:element>
+                                                              </xs:all>
+                                                            </xs:complexType>
+                                                          </xs:element>
+                                                        </xs:choice>
+                                                      </xs:complexType>
+                                                    </xs:element>
+
+                                                  </xs:choice>
+                                                </xs:complexType>
+                                              </xs:element>
+
+                                              <xs:element name="Overridable" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+                                              <xs:element name="Overriding" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+                                            </xs:all>
+                                          </xs:complexType>
+                                        </xs:element>
+                                      </xs:sequence>
+
+                                      <!-- When true, this will output the following -->
+                                      <!-- [HKEY_LOCAL_MACHINE\BCD\Objects\{GUID}\Elements] -->
+                                      <xs:attribute name="SaveKeyToRegistry" type="xs:boolean" default="true" />
+
+                                    </xs:complexType>
+                                  </xs:element>
+
+                                </xs:all>
+
+                              <!-- When true, this will output the following -->
+                              <!-- [HKEY_LOCAL_MACHINE\BCD\Objects\{GUID}] -->
+                              <!-- [HKEY_LOCAL_MACHINE\BCD\Objects\{GUID}\Description] -->
+                              <!-- "Type"=dword:######## -->
+                              <xs:attribute name="SaveKeyToRegistry" type="xs:boolean" default="true" />
+
+                            </xs:complexType>
+                          </xs:element>
+                      </xs:sequence>
+
+                    <!-- When true, this will output the following -->
+                    <!-- [HKEY_LOCAL_MACHINE\BCD\Objects] -->
+                    <xs:attribute name="SaveKeyToRegistry" type="xs:boolean" default="true" />
+                  </xs:complexType>
+              </xs:element>
+          </xs:all>
+
+        <!-- When true, will output the following -->
+        <!-- [HKEY_LOCAL_MACHINE\\BCD] -->
+        <xs:attribute name="SaveKeyToRegistry" type="xs:boolean" default="true" />
+
+        <!-- When true, will ouput the following -->
+        <!-- [HKEY_LOCAL_MACHINE\BCD\Description] -->
+        <!-- "KeyName"="BCD00000000" -->
+        <!-- "System"=(DWORD32)0x1 -->
+        <!-- "TreatAsSystem"=(DWORD32)0x1 -->
+        <xs:attribute name="IncludeDescriptions" type="xs:boolean" default="false"/>
+
+        <!-- When true, will output the following -->
+        <!-- Windows Registry Editor Version 5.00 -->
+        <xs:attribute name="IncludeRegistryHeader" type="xs:boolean" default="false"/>
+
+      </xs:complexType>
+  </xs:element>
+  
+  <xs:complexType name="GptDeviceType">
+    <xs:all>
+      <xs:element name="DiskId" type="GuidString" minOccurs="1" maxOccurs="1" />
+      <xs:element name="Partition" minOccurs="1" maxOccurs="1">
+        <xs:complexType>
+          <xs:choice>
+            <xs:element name="Id" type="GuidString" />
+            <xs:element name="Name">
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:enumeration value="MAINOS"/>
+                  <xs:enumeration value="EFIESP"/>
+                  <xs:enumeration value="OSDATA"/>
+                  <xs:enumeration value="BSP"/>
+                  <xs:enumeration value="MMOS" />
+                  <xs:enumeration value="VIRT_EFIESP" />
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:element>
+          </xs:choice>
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="AdditionalOptions" type="GuidString" minOccurs="0" maxOccurs="1" />
+    </xs:all>
+  </xs:complexType>
+
+  <xs:complexType name="MbrDeviceType">
+    <xs:all>
+      <xs:element name="DiskSignature" type="xs:string" />
+      <xs:element name="PartitionName" type="xs:string" />
+    </xs:all>
+  </xs:complexType>
+
+    <xs:complexType name="PhysicalDeviceType">
+    <xs:all>      
+      <xs:element name="DiskId" type="GuidString" minOccurs="1" maxOccurs="1"/>
+    </xs:all>
+  </xs:complexType>
+
+</xs:schema>

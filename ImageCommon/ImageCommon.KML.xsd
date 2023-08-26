@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema targetNamespace="http://microsoft.com/schemas/Windows/Kits/Manifest" xmlns:mstns="http://microsoft.com/schemas/Windows/Kits/Manifest" xmlns="http://microsoft.com/schemas/Windows/Kits/Manifest" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" elementFormDefault="qualified">
+  <xs:element name="Content" >
+    <xs:complexType>
+      <xs:choice minOccurs="1" maxOccurs="unbounded">
+        <xs:element name="ContentGroup">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="FeatureReference" minOccurs="1" maxOccurs="1">
+                <xs:complexType>
+                  <xs:attribute name="Name" type="xs:string" />
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="BinaryFile" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                  <xs:attribute name="ChunkName" type="xs:string" />
+                  <xs:attribute name="ChunkProject" type="xs:string" />
+                  <xs:attribute name="CrossArchSource" type="xs:string" />
+                  <xs:attribute name="Name" type="xs:string" />
+                  <xs:attribute name="Destination" type="xs:string" />
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute name="BuildType" type="xs:string" />
+            <xs:attribute name="BuildArchitecture" >
+              <xs:simpleType>
+                <xs:restriction base="xs:string">
+                  <xs:pattern value="(x86|X86|arm|ARM|amd64|AMD64|arm64|ARM64)"/>
+                </xs:restriction>
+              </xs:simpleType>
+            </xs:attribute>
+            <xs:attribute name="Destination" type="xs:string" use="optional"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

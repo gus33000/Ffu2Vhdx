@@ -1,0 +1,234 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema
+    targetNamespace="http://schemas.microsoft.com/embedded/2004/10/ImageUpdate/v2"
+    elementFormDefault="qualified"
+    xmlns="http://schemas.microsoft.com/embedded/2004/10/ImageUpdate/v2"
+    xmlns:mstns="http://schemas.microsoft.com/embedded/2004/10/ImageUpdate/v2"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <!---->
+    <!-- The device layout element -->
+    <!---->
+    <xs:element name="DeviceLayout" type="mstns:DeviceLayout" />
+
+    <!---->
+    <!-- DeviceLayout -->
+    <!---->
+    <xs:complexType name="DeviceLayout">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <!-- <<TODO>> -->
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="StoragePools" type="mstns:StoragePools" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="Stores" type="mstns:Stores" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="SectorSize" type="xs:positiveInteger" minOccurs="1" maxOccurs="1" />
+            <xs:element name="ChunkSize" type="xs:positiveInteger" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="DefaultPartitionByteAlignment" type="xs:string" minOccurs="0" maxOccurs="1" default="0"/>
+            <xs:element name="VersionTag" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="UpdateByOSTag" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false" />
+            <xs:element name="StateSeparationLevel" type="xs:nonNegativeInteger" minOccurs="0" maxOccurs="1" default="0" />
+        </xs:all>
+    </xs:complexType>
+
+    <!---->
+    <!-- StoragePools -->
+    <!---->
+    <xs:complexType name="StoragePools">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <!-- <<TODO>> -->
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="StoragePool" type="mstns:StoragePool" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <!---->
+    <!-- StoragePool -->
+    <!---->
+    <xs:complexType name="StoragePool">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <!-- <<TODO>> -->
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Name" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Stores" type="mstns:Stores" minOccurs="0" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <!---->
+    <!-- Stores -->
+    <!---->
+    <xs:complexType name="Stores">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <!-- <<TODO>> -->
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Store" type="mstns:Store" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <!---->
+    <!-- Store -->
+    <!---->
+    <xs:complexType name="Store">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <!-- <<TODO>> -->
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Id" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="StoreType" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="Provisioning" type="mstns:Provisioning" minOccurs="0" maxOccurs="1" />
+            <xs:element name="DevicePath" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="SizeInSectors" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="OnlyAllocateDefinedGptEntries" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+            <xs:element name="Partitions" type="mstns:Partitions" minOccurs="1" maxOccurs="1" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <!---->
+    <!-- Partitions -->
+    <!---->
+    <xs:complexType name="Partitions">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <!-- <<TODO>> -->
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="Partition" type="mstns:Partition" minOccurs="1" maxOccurs="unbounded" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <!---->
+    <!-- Partition -->
+    <!---->
+    <xs:complexType name="Partition">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <!-- <<TODO>> -->
+            </xs:documentation>
+        </xs:annotation>
+        <xs:all>
+            <xs:element name="Name" type="mstns:PartitionName" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Type" type="xs:string" minOccurs="1" maxOccurs="1" />
+            <xs:element name="Id" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="Bootable" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false" />
+            <xs:element name="ReadOnly" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false" />
+            <xs:element name="Hidden" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false" />
+            <xs:element name="AttachDriveLetter" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false" />
+            <xs:element name="ServicePartition" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false" />
+            <xs:element name="UseAllSpace" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false" />
+            <xs:element name="TotalSectors" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="MinFreeSectors" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="RequiresCompression" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false" />
+            <xs:element name="Compressed" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false" />
+            <xs:element name="GeneratedFileOverheadSectors" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="UpdateType" type="mstns:UpdateType" minOccurs="0" maxOccurs="1" default="Normal" />
+            <xs:element name="FileSystem" type="mstns:FileSystem" minOccurs="0" maxOccurs="1" />
+            <xs:element name="RequiredToFlash" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false" />
+            <xs:element name="PrimaryPartition" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="SingleSectorAlignment" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false"/>
+            <!-- Backup field is required for OEM owned partitions for the images that are updated by OS -->
+            <xs:element name="Backup" type="mstns:Backup" minOccurs="0" maxOccurs="1" />
+            <!-- BackupInSameStore is required for OEM owned partitions that require backups -->
+            <xs:element name="BackupInSameStore" type="xs:string" minOccurs="0" maxOccurs="1" />
+            <xs:element name="ByteAlignment" type="xs:string" minOccurs="0" maxOccurs="1" default="0" />
+            <!-- ClusterSize is specified in bytes. -->
+            <xs:element name="ClusterSize" type="xs:string" minOccurs="0" maxOccurs="1" default="0"/>
+            <xs:element name="OffsetInSectors" type="xs:string" minOccurs="0" maxOccurs="1" default="0" />
+            <!-- Indicates that image creation process after formatting partition should also pre generate FVE metadata on the volume. -->
+            <!-- This is required for Device Encryption to successfully get enabled on WCOS devices with Read-Only enforcement on OS volume. -->
+            <xs:element name="PrepareFveMetadata" type="xs:boolean" minOccurs="0" maxOccurs="1" default="false" />
+            <xs:element name="TargetMirrorVolume" type="xs:string" minOccurs="0" maxOccurs="1" />
+        </xs:all>
+    </xs:complexType>
+
+    <!---->
+    <!-- PartitionName -->
+    <!---->
+    <xs:simpleType name="PartitionName">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <!-- <<TODO>> -->
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="36"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!---->
+    <!-- Provisioning -->
+    <!---->
+    <xs:simpleType name="Provisioning">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <!-- <<TODO>> -->
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Thin"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!---->
+    <!-- UpdateType -->
+    <!---->
+    <xs:simpleType name="UpdateType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <!-- <<TODO>> -->
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="Never"/>
+            <xs:enumeration value="Manufacture"/>
+            <xs:enumeration value="Normal"/>
+            <xs:enumeration value="Critical"/>
+            <xs:enumeration value="UpdateCapsule"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!---->
+    <!-- Backup -->
+    <!---->
+    <xs:simpleType name="Backup">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <!-- <<TODO>> -->
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="RequiredExact"/>
+            <xs:enumeration value="RequiredExactExceptType"/>
+            <xs:enumeration value="NotRequired"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!---->
+    <!-- FileSystem -->
+    <!---->
+    <xs:simpleType name="FileSystem">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                <!-- <<TODO>> -->
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="NTFS"/>
+            <xs:enumeration value="FAT"/>
+            <xs:enumeration value="FAT32"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+</xs:schema>
