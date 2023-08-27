@@ -8,11 +8,7 @@
     <Product>Microsoft %28R%29 Windows %28R%29 Operating System</Product>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
 	<Platforms>x64;AnyCPU;ARM32;ARM64;x86</Platforms>
-    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
   </PropertyGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="BcdLayout.xsd" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ImageCommon\ImageCommon.csproj" />
   </ItemGroup>

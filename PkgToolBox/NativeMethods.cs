@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
-using Microsoft.Win32.SafeHandles;
 
 namespace Microsoft.Composition.ToolBox.IO
 {
@@ -23,23 +23,23 @@ namespace Microsoft.Composition.ToolBox.IO
         public static extern bool SetFileAttributes(string lpExistingFileName, EFileAttributes dwFlagsAndAttributes);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-        private static extern IntPtr FindFirstFileEx(string lpFileName, int fInfoLevelId, out WIN32_FIND_DATA lpFindFileData, int fSearchOp, IntPtr lpSearchFilter, uint dwAdditionalFlags);
+        private static extern nint FindFirstFileEx(string lpFileName, int fInfoLevelId, out WIN32_FIND_DATA lpFindFileData, int fSearchOp, nint lpSearchFilter, uint dwAdditionalFlags);
 
-        public static IntPtr FindFirstFile(string lpFileName, out WIN32_FIND_DATA lpFindFileData, out int win32Error)
+        public static nint FindFirstFile(string lpFileName, out WIN32_FIND_DATA lpFindFileData, out int win32Error)
         {
-            IntPtr result = NativeMethods.FindFirstFileEx(lpFileName, 1, out lpFindFileData, 0, IntPtr.Zero, 0U);
+            nint result = FindFirstFileEx(lpFileName, 1, out lpFindFileData, 0, nint.Zero, 0U);
             win32Error = Marshal.GetLastWin32Error();
             return result;
         }
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-        public static extern int FindNextFile(IntPtr hFindFile, out WIN32_FIND_DATA lpFindFileData);
+        public static extern int FindNextFile(nint hFindFile, out WIN32_FIND_DATA lpFindFileData);
 
         [DllImport("kernel32.dll")]
-        public static extern bool FindClose(IntPtr hFindFile);
+        public static extern bool FindClose(nint hFindFile);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern int CreateDirectory(string pszPath, IntPtr psa);
+        public static extern int CreateDirectory(string pszPath, nint psa);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern int RemoveDirectory(string pszPath);
@@ -48,7 +48,7 @@ namespace Microsoft.Composition.ToolBox.IO
         private static extern int GetFileAttributesEx(string lpFileName, int fInfoLevelId, out WIN32_FIND_DATA lpFileInformation);
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
-        public static extern SafeFileHandle CreateFile(string lpFileName, EFileAccess dwDesiredAccess, EFileShare dwShareMode, IntPtr lpSecurityAttributes, ECreationDisposition dwCreationDisposition, EFileAttributes dwFlagsAndAttributes, IntPtr hTemplateFile);
+        public static extern SafeFileHandle CreateFile(string lpFileName, EFileAccess dwDesiredAccess, EFileShare dwShareMode, nint lpSecurityAttributes, ECreationDisposition dwCreationDisposition, EFileAttributes dwFlagsAndAttributes, nint hTemplateFile);
 
         internal const int MAX_PATH = 260;
 
