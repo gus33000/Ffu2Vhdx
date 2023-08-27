@@ -1,5 +1,4 @@
-﻿using Microsoft.Composition.ToolBox.IO;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Microsoft.WindowsPhone.Imaging
@@ -18,9 +17,6 @@ namespace Microsoft.WindowsPhone.Imaging
 
         private void Initialize(FullFlashUpdateImage A_1, FullFlashUpdateStoragePool A_2, string A_3, string A_4, bool A_5, bool A_6, string A_7, string A_8, bool A_9, uint A_10, uint A_11)
         {
-            _tempBackingStorePath = PathToolBox.GetTemporaryPath();
-            DirectoryToolBox.CreateDirectory(_tempBackingStorePath);
-            _tempBackingStoreFile = PathToolBox.Combine(_tempBackingStorePath, "FFUBackingStore");
             Image = A_1;
             StoragePool = A_2;
             Id = A_3;
@@ -54,14 +50,6 @@ namespace Microsoft.WindowsPhone.Imaging
             if (A_1)
             {
                 Partitions = null;
-            }
-            try
-            {
-                DirectoryToolBox.Delete(_tempBackingStorePath);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Warning: ImageCommon!Dispose: Failed to delete temporary backing store directory/file '" + _tempBackingStorePath + "' with exception: " + ex.Message);
             }
             _alreadyDisposed = true;
         }
@@ -244,10 +232,6 @@ namespace Microsoft.WindowsPhone.Imaging
         private List<FullFlashUpdatePartition> _ffuPartitions;
 
         private uint _sectorsUsed;
-
-        private string _tempBackingStoreFile = string.Empty;
-
-        private string _tempBackingStorePath = string.Empty;
 
         private bool _alreadyDisposed;
     }

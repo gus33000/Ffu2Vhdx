@@ -2,6 +2,7 @@
 using DiscUtils;
 using DiscUtils.Streams;
 using DiscUtils.Vhdx;
+using System.Text;
 
 namespace Ffu2Vhdx
 {
@@ -37,26 +38,19 @@ namespace Ffu2Vhdx
         {
             DiscUtils.Setup.SetupHelper.RegisterAssembly(typeof(Disk).Assembly);
 
-            FullFlashUpdateImage ffuImage = new(ffuPath);
-            using FileStream imageStream = ffuImage.GetImageStream();
-            PayloadReader payloadReader = new(imageStream);
-            if (payloadReader.Payloads.Count() != ffuImage.StoreCount)
-            {
-                throw new ImageStorageException("Store counts in metadata and store header do not match.");
-            }
+            using FileStream ffuStream = File.OpenRead(ffuPath);
+            FfuFile ffuFile = new(ffuStream);
 
-            for (int i = 0; i < ffuImage.StoreCount; i++)
+            for (int i = 0; i < ffuFile.StoreCount; i++)
             {
-                FullFlashUpdateStore fullFlashUpdateStore = ffuImage.Stores[i];
-                StorePayload storePayload = payloadReader.Payloads[i];
-
                 string vhdfile = Path.Combine(outputDirectory, $"LUN{i}.vhdx");
                 Console.WriteLine($"Dumping {vhdfile}...");
 
-                long diskCapacity = (long)fullFlashUpdateStore.MinSectorCount * fullFlashUpdateStore.SectorSize;
+                long diskCapacity = (long)ffuFile.GetMinSectorCount(i) * ffuFile.GetSectorSize(i);
                 using Stream fs = new FileStream(vhdfile, FileMode.CreateNew, FileAccess.ReadWrite);
-                using VirtualDisk outDisk = Disk.InitializeDynamic(fs, Ownership.None, diskCapacity, logicalSectorSize: (int)fullFlashUpdateStore.SectorSize);
-                payloadReader.WriteToStream(outDisk.Content, storePayload, fullFlashUpdateStore.MinSectorCount, fullFlashUpdateStore.SectorSize);
+                using VirtualDisk outDisk = Disk.InitializeDynamic(fs, Ownership.None, diskCapacity, logicalSectorSize: (int)ffuFile.GetSectorSize(i));
+
+                ffuFile.WriteStoreToStream(i, outDisk.Content);
             }
         }
     }

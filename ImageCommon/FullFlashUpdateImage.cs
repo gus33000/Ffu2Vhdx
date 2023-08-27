@@ -1,30 +1,23 @@
-﻿using Microsoft.Composition.ToolBox.IO;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Text;
 
 namespace Microsoft.WindowsPhone.Imaging
 {
-    [DefaultMember("Item")]
     public class FullFlashUpdateImage
     {
-        public FullFlashUpdateImage()
+        private readonly Stream imageStream;
+
+        public FullFlashUpdateImage(Stream imageStream)
         {
+            this.imageStream = imageStream;
+
             _ffuStoragePools = new List<FullFlashUpdateStoragePool>();
             _ffuStores = new List<FullFlashUpdateStore>();
-        }
 
-        public FullFlashUpdateImage(string A_1) : this()
-        {
-            if (!FileToolBox.Exists(A_1))
-            {
-                throw new ImageCommonException(CodeSite.StorageService, ErrorCategory.MissingArtifact, "The FFU file '" + A_1 + "' does not exist.");
-            }
-            _imagePath = PathToolBox.GetFullPath(A_1);
-            using FileStream imageStream = GetImageStream();
-            using BinaryReader binaryReader = new(imageStream);
+            using BinaryReader binaryReader = new(imageStream, Encoding.UTF8, true);
             uint num = binaryReader.ReadUInt32();
             byte[] signature = binaryReader.ReadBytes(12);
             if (num != FullFlashUpdateHeaders.SecurityHeaderSize || !SecurityHeader.ValidateSignature(signature))
@@ -58,11 +51,10 @@ namespace Microsoft.WindowsPhone.Imaging
             _payloadOffset = imageStream.Position;
         }
 
-        public FileStream GetImageStream()
+        public Stream GetImageStream()
         {
-            FileStream fileStream = FileToolBox.Stream(_imagePath);
-            fileStream.Position = _payloadOffset;
-            return fileStream;
+            imageStream.Position = _payloadOffset;
+            return imageStream;
         }
 
         internal void AddStoragePool(ManifestCategory A_1)
@@ -148,14 +140,10 @@ namespace Microsoft.WindowsPhone.Imaging
 
         private readonly List<FullFlashUpdateStore> _ffuStores;
 
-        private readonly string _imagePath;
-
         private readonly long _payloadOffset;
 
         private readonly ImageHeaderEx _imageHeader = new();
 
         private SecurityHeader _securityHeader;
-
-        private readonly uint _defaultPartititionByteAlignment = 65536U;
     }
 }

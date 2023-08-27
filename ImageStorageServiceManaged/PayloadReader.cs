@@ -6,7 +6,7 @@ namespace Microsoft.WindowsPhone.Imaging
 {
     public class PayloadReader
     {
-        public PayloadReader(FileStream fileStream)
+        public PayloadReader(Stream fileStream)
         {
             _payloadStream = fileStream;
             _payloadOffsets = new List<PayloadOffset>();
@@ -115,7 +115,7 @@ namespace Microsoft.WindowsPhone.Imaging
 
         private readonly List<PayloadOffset> _payloadOffsets;
 
-        private readonly FileStream _payloadStream;
+        private readonly Stream _payloadStream;
 
         private class PayloadOffset
         {
