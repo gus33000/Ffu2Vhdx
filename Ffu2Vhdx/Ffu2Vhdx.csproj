@@ -10,8 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DiscUtils\DiscUtils.Vhdx\DiscUtils.Vhdx.csproj" />
-    <ProjectReference Include="..\ImageCommon\ImageCommon.csproj" />
-    <ProjectReference Include="..\ImageStorageServiceManaged\ImageStorageServiceManaged.csproj" />
+    <ProjectReference Include="..\FfuStream\FfuStream.csproj" />
   </ItemGroup>
 
 </Project>

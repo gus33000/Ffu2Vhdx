@@ -1,8 +1,8 @@
 ﻿using Microsoft.WindowsPhone.Imaging;
 
-namespace Ffu2Vhdx
+namespace FfuStream
 {
-    internal class FfuFile
+    public class FfuFile
     {
         private readonly FullFlashUpdateImage ffuImage;
 
@@ -33,6 +33,19 @@ namespace Ffu2Vhdx
             StorePayload storePayload = payloadReader.Payloads[StoreIndex];
 
             payloadReader.WriteToStream(outputStream, storePayload, fullFlashUpdateStore.MinSectorCount, fullFlashUpdateStore.SectorSize);
+        }
+
+        public Stream OpenStore(int StoreIndex)
+        {
+            if (StoreIndex >= StoreCount || StoreIndex < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(StoreIndex));
+            }
+
+            FullFlashUpdateStore fullFlashUpdateStore = ffuImage.Stores[StoreIndex];
+            StorePayload storePayload = payloadReader.Payloads[StoreIndex];
+
+            return new FfuStoreStream(payloadReader, fullFlashUpdateStore, storePayload);
         }
 
         public uint GetMinSectorCount(int StoreIndex)

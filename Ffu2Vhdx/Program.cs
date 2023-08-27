@@ -1,8 +1,7 @@
-﻿using Microsoft.WindowsPhone.Imaging;
-using DiscUtils;
+﻿using DiscUtils;
 using DiscUtils.Streams;
 using DiscUtils.Vhdx;
-using System.Text;
+using FfuStream;
 
 namespace Ffu2Vhdx
 {
@@ -50,8 +49,59 @@ namespace Ffu2Vhdx
                 using Stream fs = new FileStream(vhdfile, FileMode.CreateNew, FileAccess.ReadWrite);
                 using VirtualDisk outDisk = Disk.InitializeDynamic(fs, Ownership.None, diskCapacity, logicalSectorSize: (int)ffuFile.GetSectorSize(i));
 
-                ffuFile.WriteStoreToStream(i, outDisk.Content);
+                using Stream store = ffuFile.OpenStore(i);
+
+                StreamPump pump = new()
+                {
+                    InputStream = store,
+                    OutputStream = outDisk.Content,
+                    SparseCopy = true,
+                    SparseChunkSize = (int)ffuFile.GetSectorSize(i),
+                    BufferSize = (int)ffuFile.GetSectorSize(i) * 1024
+                };
+
+                long totalBytes = store.Length;
+
+                DateTime now = DateTime.Now;
+                pump.ProgressEvent += (o, e) => { ShowProgress((ulong)e.BytesRead, (ulong)totalBytes, now); };
+
+                Console.WriteLine($"Dumping Store {i}");
+                pump.Run();
+                Console.WriteLine();
+
+                store.Dispose();
             }
+        }
+
+        protected static void ShowProgress(ulong readBytes, ulong totalBytes, DateTime startTime)
+        {
+            DateTime now = DateTime.Now;
+            TimeSpan timeSoFar = now - startTime;
+
+            TimeSpan remaining =
+                TimeSpan.FromMilliseconds(timeSoFar.TotalMilliseconds / readBytes * (totalBytes - readBytes));
+
+            double speed = Math.Round(readBytes / 1024L / 1024L / timeSoFar.TotalSeconds);
+
+            Console.Write(
+                $"\r{GetDismLikeProgBar((int)(readBytes * 100 / totalBytes))} {speed}MB/s {remaining:hh\\:mm\\:ss\\.f}");
+        }
+
+        private static string GetDismLikeProgBar(int percentage)
+        {
+            int eqsLength = (int)((double)percentage / 100 * 55);
+            string bases = new string('=', eqsLength) + new string(' ', 55 - eqsLength);
+            bases = bases.Insert(28, percentage + "%");
+            if (percentage == 100)
+            {
+                bases = bases[1..];
+            }
+            else if (percentage < 10)
+            {
+                bases = bases.Insert(28, " ");
+            }
+
+            return $"[{bases}]";
         }
     }
 }
