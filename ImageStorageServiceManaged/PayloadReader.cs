@@ -92,7 +92,7 @@ namespace Microsoft.WindowsPhone.Imaging
             return end > begin;
         }
 
-        private static void WriteDetour(long inputPosition, byte[] inputBuffer, int inputCount, long position, byte[] buffer, int offset, int count)
+        private static int WriteDetour(long inputPosition, byte[] inputBuffer, int inputCount, long position, byte[] buffer, int offset, int count)
         {
             long begin = Math.Max(inputPosition, position);
             long end = Math.Min(inputPosition + inputCount, position + count);
@@ -105,7 +105,11 @@ namespace Microsoft.WindowsPhone.Imaging
                 using var strm = new MemoryStream(buffer);
                 strm.Seek(index, SeekOrigin.Begin);
                 strm.Write(inputBuffer, inputIndex, (int)(end - begin));
+
+                return (int)(end - begin);
             }
+
+            return 0;
         }
 
         public void WriteToStream(StorePayload storePayload, ulong sectorCount, uint sectorSize, long position, byte[] buffer, int offset, int count)
@@ -121,10 +125,20 @@ namespace Microsoft.WindowsPhone.Imaging
 
             _payloadStream.Position = payloadOffset.Offset;
 
+            int blocksRead = 0;
+
             for (StorePayload.BlockPhase blockPhase = StorePayload.BlockPhase.Phase1; blockPhase != StorePayload.BlockPhase.Invalid; blockPhase++)
             {
+                int readCount = 0;
+
                 foreach (DataBlockEntry dataBlockEntry in storePayload.GetPhaseEntries(blockPhase))
                 {
+                    if (readCount == count)
+                    {
+                        blocksRead++;
+                        continue;
+                    }
+
                     bool blockMatches = false;
                     byte[] ibuffer = new byte[bytesPerBlock];
 
@@ -138,22 +152,33 @@ namespace Microsoft.WindowsPhone.Imaging
 
                         if (blockMatches)
                         {
-                            WriteDetour(ioffset, ibuffer, (int)bytesPerBlock, position, buffer, offset, count);
+                            readCount += WriteDetour(ioffset, ibuffer, (int)bytesPerBlock, position, buffer, offset, count);
+                            if (readCount == count)
+                            {
+                                break;
+                            }
                         }
                         else
                         {
                             blockMatches = WriteDetourOk(ioffset, (int)bytesPerBlock, position, count);
                             if (blockMatches)
                             {
+                                _payloadStream.Position = payloadOffset.Offset + (bytesPerBlock * blocksRead);
                                 _payloadStream.Read(ibuffer, 0, (int)bytesPerBlock);
-                                WriteDetour(ioffset, ibuffer, (int)bytesPerBlock, position, buffer, offset, count);
+                                blocksRead++;
+
+                                readCount += WriteDetour(ioffset, ibuffer, (int)bytesPerBlock, position, buffer, offset, count);
+                                if (readCount == count)
+                                {
+                                    break;
+                                }
                             }
                         }
                     }
 
                     if (!blockMatches)
                     {
-                        _payloadStream.Seek((int)bytesPerBlock, SeekOrigin.Current);
+                        blocksRead++;
                     }
                 }
             }

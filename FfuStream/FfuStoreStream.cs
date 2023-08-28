@@ -16,13 +16,15 @@ namespace FfuStream
             this.storePayload = storePayload;
         }
 
+        public string DevicePath => fullFlashUpdateStore.DevicePath;
+
         public override bool CanRead => true;
 
         public override bool CanSeek => true;
 
         public override bool CanWrite => false;
 
-        public override long Length => fullFlashUpdateStore.MinSectorCount * fullFlashUpdateStore.SectorSize;
+        public override long Length => ((long)fullFlashUpdateStore.MinSectorCount * fullFlashUpdateStore.SectorSize);
 
         public override long Position
         {

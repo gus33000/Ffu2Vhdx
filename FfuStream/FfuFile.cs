@@ -35,7 +35,7 @@ namespace FfuStream
             payloadReader.WriteToStream(outputStream, storePayload, fullFlashUpdateStore.MinSectorCount, fullFlashUpdateStore.SectorSize);
         }
 
-        public Stream OpenStore(int StoreIndex)
+        public FfuStoreStream OpenStore(int StoreIndex)
         {
             if (StoreIndex >= StoreCount || StoreIndex < 0)
             {

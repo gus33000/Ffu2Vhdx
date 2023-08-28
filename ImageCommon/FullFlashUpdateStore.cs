@@ -84,9 +84,9 @@ namespace Microsoft.WindowsPhone.Imaging
             get; set;
         }
 
-        private string DevicePath
+        public string DevicePath
         {
-            get; set;
+            get; private set;
         }
 
         private bool OnlyAllocateDefinedGptEntries
