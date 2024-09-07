@@ -2,7 +2,6 @@
 using DiscUtils.Streams;
 using DiscUtils.Vhdx;
 using Img2Ffu.Reader;
-using Img2Ffu.Reader.Data;
 
 namespace Ffu2Vhdx
 {
