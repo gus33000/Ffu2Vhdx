@@ -79,3 +79,7 @@ E:.
             Store2_VenHw(D33F1985-F107-4A85-BE38-68DC7AD32CEA).vhdx
             Store3_VenHw(860845C1-BE09-4355-8BC1-30D64FF8E63A).vhdx
 ```
+
+## Demo
+
+https://github.com/user-attachments/assets/922ec96a-1ed4-499b-b3e1-1eb8c11a5c7e
