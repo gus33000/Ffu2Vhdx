@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <Platforms>x64;AnyCPU;ARM32;ARM64;x86</Platforms>
@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DiscUtils\DiscUtils.Vhdx\DiscUtils.Vhdx.csproj" />
-    <ProjectReference Include="..\FfuStream\FfuStream.csproj" />
+    <ProjectReference Include="..\Img2Ffu\Img2Ffu.csproj" />
   </ItemGroup>
 
 </Project>

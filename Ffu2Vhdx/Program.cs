@@ -1,7 +1,8 @@
 ﻿using DiscUtils;
 using DiscUtils.Streams;
 using DiscUtils.Vhdx;
-using FfuStream;
+using Img2Ffu.Reader;
+using Img2Ffu.Reader.Data;
 
 namespace Ffu2Vhdx
 {
@@ -102,12 +103,9 @@ namespace Ffu2Vhdx
         {
             DiscUtils.Setup.SetupHelper.RegisterAssembly(typeof(Disk).Assembly);
 
-            using FileStream ffuStream = File.OpenRead(ffuPath);
-            FfuFile ffuFile = new(ffuStream);
-
-            for (int i = 0; i < ffuFile.StoreCount; i++)
+            for (int i = 0; i < FullFlashUpdateReaderStream.GetStoreCount(ffuPath); i++)
             {
-                using FfuStoreStream store = ffuFile.OpenStore(i);
+                using FullFlashUpdateReaderStream store = new(ffuPath, (ulong)i);
 
                 string friendlyDevicePath = FormatDevicePath(store.DevicePath);
                 string vhdfile = Path.Combine(outputDirectory, $"Store{i}_{ReplaceInvalidChars(store.DevicePath)}.vhdx");
@@ -117,18 +115,16 @@ namespace Ffu2Vhdx
                 Console.WriteLine($"Device Path: {friendlyDevicePath}");
                 Console.WriteLine($"Destination: {vhdfile}");
 
-                long SectorSize = ffuFile.GetSectorSize(i);
-
                 using Stream fs = new FileStream(vhdfile, FileMode.CreateNew, FileAccess.ReadWrite);
-                using VirtualDisk outDisk = Disk.InitializeDynamic(fs, Ownership.None, store.Length, logicalSectorSize: (int)SectorSize);
+                using VirtualDisk outDisk = Disk.InitializeDynamic(fs, Ownership.None, store.Length, logicalSectorSize: store.SectorSize);
 
                 StreamPump pump = new()
                 {
                     InputStream = store,
                     OutputStream = outDisk.Content,
                     SparseCopy = true,
-                    SparseChunkSize = (int)SectorSize,
-                    BufferSize = (int)SectorSize * 1024
+                    SparseChunkSize = store.SectorSize,
+                    BufferSize = store.SectorSize * 1024
                 };
 
                 long totalBytes = store.Length;
