@@ -55,7 +55,7 @@ namespace Ffu2Vhdx
         private readonly static Guid UfsLU7Guid = new("8598155F-34DE-415C-8B55-843E3322D36F");
         private readonly static Guid UfsRPMBGuid = new("5397474E-F75D-44B3-8E57-D9324FCF6FE1");
 
-        private static Dictionary<Guid, string> guidNames = new Dictionary<Guid, string>()
+        private static Dictionary<Guid, string> guidNames = new()
         {
             { EmmcUserPartitionGuid, "eMMC (User)" },
             { EmmcBootPartition1Guid, "eMMC (Boot 1)" },
@@ -107,8 +107,15 @@ namespace Ffu2Vhdx
             {
                 using FullFlashUpdateReaderStream store = new(ffuPath, (ulong)i);
 
-                string friendlyDevicePath = FormatDevicePath(store.DevicePath);
-                string vhdfile = Path.Combine(outputDirectory, $"Store{i}_{ReplaceInvalidChars(store.DevicePath)}.vhdx");
+                string DevicePath = store.DevicePath;
+
+                if (string.IsNullOrEmpty(DevicePath))
+                {
+                    DevicePath = "VenHw(B615F1F5-5088-43CD-809C-A16E52487D00)";
+                }
+
+                string friendlyDevicePath = FormatDevicePath(DevicePath);
+                string vhdfile = Path.Combine(outputDirectory, $"Store{i}_{ReplaceInvalidChars(DevicePath)}.vhdx");
 
                 Console.WriteLine($"Store: {i}");
                 Console.WriteLine($"Size: {store.Length}");
