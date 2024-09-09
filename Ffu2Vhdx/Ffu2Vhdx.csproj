@@ -9,8 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DiscUtils\DiscUtils.Vhdx\DiscUtils.Vhdx.csproj" />
-    <ProjectReference Include="..\Img2Ffu\Img2Ffu.csproj" />
+    <ProjectReference Include="..\Img2Ffu.Library\Img2Ffu.Library.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+  	<PackageReference Include="LTRData.DiscUtils.Vhdx" Version="1.0.46" />
   </ItemGroup>
 
 </Project>

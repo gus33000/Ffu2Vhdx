@@ -122,7 +122,7 @@ namespace Ffu2Vhdx
                 Console.WriteLine($"Destination: {vhdfile}");
 
                 using Stream fs = new FileStream(vhdfile, FileMode.CreateNew, FileAccess.ReadWrite);
-                using VirtualDisk outDisk = Disk.InitializeDynamic(fs, Ownership.None, store.Length, logicalSectorSize: store.SectorSize);
+                using VirtualDisk outDisk = Disk.InitializeDynamic(fs, Ownership.None, store.Length, Geometry.FromCapacity(store.Length, store.SectorSize));
 
                 StreamPump pump = new()
                 {
