@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Img2Ffu.Library\Img2Ffu.Library.csproj" />
+    <ProjectReference Include="..\Img2Ffu\Img2Ffu.Library\Img2Ffu.Library.csproj" />
   </ItemGroup>
 
   <ItemGroup>

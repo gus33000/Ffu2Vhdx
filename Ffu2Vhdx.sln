@@ -4,7 +4,7 @@ VisualStudioVersion = 17.7.33927.210
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ffu2Vhdx", "Ffu2Vhdx\Ffu2Vhdx.csproj", "{6BB88918-A58C-4510-A99F-AA22C7D5BD55}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Img2Ffu.Library", "Img2Ffu.Library\Img2Ffu.Library.csproj", "{97E58534-9D04-4E73-9243-50AA143A1DA6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Img2Ffu.Library", "Img2Ffu\Img2Ffu.Library\Img2Ffu.Library.csproj", "{97E58534-9D04-4E73-9243-50AA143A1DA6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
