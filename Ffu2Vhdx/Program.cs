@@ -9,11 +9,11 @@ namespace Ffu2Vhdx
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("\nFFU Image To VHDx(s) tool\nVersion: 1.0.0.0\n");
+            Logging.Log("\nFFU Image To VHDx(s) tool\nVersion: 1.0.0.0\n");
 
             if (args.Length != 2)
             {
-                Console.WriteLine("Usage: Ffu2Vhdx <Path to FFU File> <Output director for LUNi.vhdx files>");
+                Logging.Log("Usage: Ffu2Vhdx <Path to FFU File> <Output director for LUNi.vhdx files>");
                 return;
             }
 
@@ -22,14 +22,13 @@ namespace Ffu2Vhdx
 
             if (!File.Exists(FfuPath))
             {
-                Console.WriteLine($"FfuFile does not exist: {FfuPath}");
+                Logging.Log($"FfuFile does not exist: {FfuPath}");
                 return;
             }
 
             if (!Directory.Exists(OutputDirectory))
             {
-                Console.WriteLine($"Output directory does not exist: {OutputDirectory}");
-                return;
+                Directory.CreateDirectory(OutputDirectory);
             }
 
             ConvertFFU2VHD(FfuPath, OutputDirectory);
@@ -116,34 +115,26 @@ namespace Ffu2Vhdx
                 string friendlyDevicePath = FormatDevicePath(DevicePath);
                 string vhdfile = Path.Combine(outputDirectory, $"Store{i}_{ReplaceInvalidChars(DevicePath)}.vhdx");
 
-                Console.WriteLine($"Store: {i}");
-                Console.WriteLine($"Size: {store.Length}");
-                Console.WriteLine($"Device Path: {friendlyDevicePath}");
-                Console.WriteLine($"Destination: {vhdfile}");
+                Logging.Log($"Store: {i}");
+                Logging.Log($"Size: {store.Length}");
+                Logging.Log($"Device Path: {friendlyDevicePath}");
+                Logging.Log($"Destination: {vhdfile}");
 
                 using Stream fs = new FileStream(vhdfile, FileMode.CreateNew, FileAccess.ReadWrite);
                 using VirtualDisk outDisk = Disk.InitializeDynamic(fs, Ownership.None, store.Length, Geometry.FromCapacity(store.Length, store.SectorSize));
 
-                StreamPump pump = new()
+                DateTime now = DateTime.Now;
+                Action<ulong, ulong> progressCallback = (ulong readBytes, ulong totalBytes) =>
                 {
-                    InputStream = store,
-                    OutputStream = outDisk.Content,
-                    SparseCopy = true,
-                    SparseChunkSize = store.SectorSize,
-                    BufferSize = store.SectorSize * 1024
+                    ShowProgress(readBytes, totalBytes, now);
                 };
 
-                long totalBytes = store.Length;
-
-                DateTime now = DateTime.Now;
-                pump.ProgressEvent += (o, e) => { ShowProgress((ulong)e.BytesRead, (ulong)totalBytes, now); };
-
-                Console.WriteLine($"Dumping Store {i}");
-                pump.Run();
-                Console.WriteLine("\n");
+                Logging.Log($"Dumping Store {i}");
+                store.CopyTo(outDisk.Content, progressCallback);
+                Logging.Log();
             }
 
-            Console.WriteLine("The operation completed successfully.");
+            Logging.Log("The operation completed successfully.");
         }
 
         protected static void ShowProgress(ulong readBytes, ulong totalBytes, DateTime startTime)
@@ -151,30 +142,14 @@ namespace Ffu2Vhdx
             DateTime now = DateTime.Now;
             TimeSpan timeSoFar = now - startTime;
 
-            TimeSpan remaining =
-                TimeSpan.FromMilliseconds(timeSoFar.TotalMilliseconds / readBytes * (totalBytes - readBytes));
+            TimeSpan remaining = readBytes != 0 ?
+                TimeSpan.FromMilliseconds(timeSoFar.TotalMilliseconds / readBytes * (totalBytes - readBytes)) : TimeSpan.MaxValue;
 
             double speed = Math.Round(readBytes / 1024L / 1024L / timeSoFar.TotalSeconds);
 
-            Console.Write(
-                $"\r{GetDismLikeProgBar((int)(readBytes * 100 / totalBytes))} {speed}MB/s {remaining:hh\\:mm\\:ss\\.f}");
-        }
+            uint percentage = (uint)(readBytes * 100 / totalBytes);
 
-        private static string GetDismLikeProgBar(int percentage)
-        {
-            int eqsLength = (int)((double)percentage / 100 * 55);
-            string bases = new string('=', eqsLength) + new string(' ', 55 - eqsLength);
-            bases = bases.Insert(28, percentage + "%");
-            if (percentage == 100)
-            {
-                bases = bases[1..];
-            }
-            else if (percentage < 10)
-            {
-                bases = bases.Insert(28, " ");
-            }
-
-            return $"[{bases}]";
+            Logging.Log($"{Logging.GetDISMLikeProgressBar(percentage)} {speed}MB/s {remaining:hh\\:mm\\:ss\\.f}", returnLine: false);
         }
     }
 }
